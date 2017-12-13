@@ -14,23 +14,37 @@ int server_handshake(int *to_client) {
   //int READ = 0;
   //int WRITE = 1;
 
+  printf("hello\n");
   mkfifo("WKP", 0644);
-  int pfd = open("WKP", O_RDONLY);
-  char * pvtfifo;
+  printf("Second hello\n");
+  int pfd = open("WKP", O_RDONLY, 0644);
+  if (pfd == -1) {
+    printf("%s\n", strerror(errno));
+  }
+  printf("WKP fd: %d\n", pfd);
+  char * pvtfifo = malloc(512);
   read(pfd, pvtfifo, sizeof(pvtfifo));
-  
+
   if(strcmp(pvtfifo, "priv") == 0){
     close(pfd);
-    mkfifo("ser_to_cli", 0644);
-    int pfd1 = open("ser_to_cli", O_WRONLY);
-    char * testmsg = "test"
-    write("ser_to_cli", testmsg, sizeof(testmsg));
+    //mkfifo("ser_to_cli", 0644);
+    *to_client = open(pvtfifo, O_WRONLY);
+    printf("%d\n", *to_client);
+    char * testmsg = "yes";
+    write(*to_client, testmsg, sizeof(testmsg));
 
   }
 
+  char * confirmed = malloc(512);
+  read(pfd, confirmed, sizeof(confirmed));
+  if (strcmp(confirmed, "confirmed")) {
+    printf("Handshake shaken");
+  }
 
+  free(pvtfifo);
+  free(confirmed);
 
-  return 0;
+  return pfd;
 }
 
 
@@ -44,13 +58,28 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
-  
-  mkfifo("priv", 0644);
-  int pfd = open("priv", O_WRONLY);
-  char * sent= "priv";
-  write("WKP", sent, sizeof(sent));
-  
-  int pfd1 = open("ser_to_cli", O_RDONLY);
 
-  return 0;
+  printf("Client hello\n");
+  *to_server = open("WKP", O_WRONLY, 0644);
+  printf("%d\n", *to_server);
+
+  mkfifo("priv", 0644);
+  int pfd = open("priv", O_RDONLY, 0644);
+  printf("%d\n", pfd);
+  char * sent= "priv";
+  write(*to_server, sent, sizeof(sent));
+
+  // int pfd1 = open("ser_to_cli", O_RDONLY);
+  char * message = malloc(512);
+  read(pfd, message, sizeof(message));
+
+  if (strcmp(message, "yes") == 0) {
+    close(pfd);
+    char * confirm = "confirmed";
+    write(*to_server, confirm, sizeof(confirm));
+  }
+
+  free(message);
+
+  return pfd;
 }
