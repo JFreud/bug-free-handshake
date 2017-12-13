@@ -47,6 +47,13 @@ int server_handshake(int *to_client) {
     printf("Server: Handshake confirmed\n");
   }
 
+  printf("Hello\n");
+  char * usermod = malloc(512);
+  read(pfd, usermod, sizeof(usermod));
+  printf("Here it is: %s\n", usermod);
+  usermod = strcat(usermod, " repeats the server");
+  write(*to_client, usermod, sizeof(usermod));
+
   free(pvtfifo);
   free(confirmed);
 
@@ -92,6 +99,11 @@ int client_handshake(int *to_server) {
     printf("Client: Sending confirmation\n");
     write(*to_server, confirm, sizeof(confirm));
   }
+
+
+
+
+
 
   free(message);
 
