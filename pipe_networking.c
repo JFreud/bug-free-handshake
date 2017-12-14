@@ -32,6 +32,7 @@ int server_handshake(int *to_client) {
   if(strcmp(pvtfifo, "priv") == 0){
     printf("Server: Received connection\n");
     //close(pfd);
+    remove("WKP");
     //mkfifo("ser_to_cli", 0644);
     *to_client = open(pvtfifo, O_WRONLY);
     //printf("%d\n", *to_client);
@@ -89,18 +90,19 @@ int client_handshake(int *to_server) {
 
   if (strcmp(message, "yes") == 0) {
     printf("Client: Received message\n");
-    close(pfd);
+    //close(pfd);
+    remove("priv");
     char * confirm = "confirmed";
     printf("Client: Sending confirmation\n");
     if(write(*to_server, confirm, sizeof(confirm)) == -1){
-      printf("!!!\n");
+      //printf("!!!\n");
       printf("some sort of error: %s\n", strerror(errno));
       exit(0);
     }
-    printf("hm\n");
+    //printf("hm\n");
   }
 
-  printf("?\n");
+  //printf("?\n");
   free(message);
 
   return pfd;

@@ -8,16 +8,18 @@ int main() {
 
 
 
-  char * userin = malloc(512);
-  char * serverout = malloc(512);
+  char userin[512];
+  char serverout[512];
   from_server = client_handshake( &to_server );
   printf("FINISHED HANDSHAKE\n");
 
   while(1) {
     printf("Enter some text:\n");
     fgets(userin, sizeof(userin), stdin);
+    strtok(userin, "\n"); //remove newline
     write(to_server, userin, sizeof(userin));
     read(from_server, serverout, sizeof(serverout));
     printf("Modified data: %s\n", serverout);
   }
+  return 0;
 }
