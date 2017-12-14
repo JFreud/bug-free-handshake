@@ -1,5 +1,12 @@
 #include "pipe_networking.h"
 
+void make_caps(char * string){
+  while (*string) {
+    *string = toupper(*string);
+    string++;
+  }
+}
+
 
 int main() {
 
@@ -15,7 +22,7 @@ int main() {
     read(from_client, usermod, sizeof(usermod));
     printf("Here it is: %s\n", usermod);
     //usermod = strcat(usermod, " repeats the server");
-    *usermod = toupper(*usermod);
+    make_caps(usermod);
     //printf("toclient: %d\n", to_client);
     printf("Modified stuff: %s\n", usermod);
     if ((ret = write(to_client, usermod, sizeof(usermod))) == -1) {
