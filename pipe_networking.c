@@ -92,12 +92,16 @@ int client_handshake(int *to_server) {
     close(pfd);
     char * confirm = "confirmed";
     printf("Client: Sending confirmation\n");
-    write(*to_server, confirm, sizeof(confirm));
+    if(write(*to_server, confirm, sizeof(confirm)) == -1){
+      printf("!!!\n");
+      printf("some sort of error: %s\n", strerror(errno));
+      exit(0);
+    }
+    printf("hm\n");
   }
 
-
+  printf("?\n");
   free(message);
 
-  printf("WAKA\n");
   return pfd;
 }
