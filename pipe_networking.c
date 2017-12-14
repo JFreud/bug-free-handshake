@@ -31,7 +31,7 @@ int server_handshake(int *to_client) {
 
   if(strcmp(pvtfifo, "priv") == 0){
     printf("Server: Received connection\n");
-    close(pfd);
+    //close(pfd);
     //mkfifo("ser_to_cli", 0644);
     *to_client = open(pvtfifo, O_WRONLY);
     //printf("%d\n", *to_client);

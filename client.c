@@ -17,5 +17,7 @@ int main() {
     printf("Enter some text:\n");
     fgets(userin, sizeof(userin), stdin);
     write(to_server, userin, sizeof(userin));
+    read(from_server, serverout, sizeof(serverout));
+    printf("Modified data: %s\n", serverout);
   }
 }
